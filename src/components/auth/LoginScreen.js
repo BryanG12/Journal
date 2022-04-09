@@ -1,16 +1,20 @@
 import React from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { login, startLoginEmailPassword } from '../../actions/auth'
+import validator from 'validator'
+import { startGoogleLogin, startLoginEmailPassword } from '../../actions/auth'
+import { setError } from '../../actions/ui'
 import { useForm } from '../../hooks/useForm'
 
 export const LoginScreen = () => {
 
   const dispatch = useDispatch();
 
+  const {msgError,isLoading} = useSelector( state => state.ui );
+
   const [formValues, handleInputChange] = useForm ({
-    email: 'spike@gmail.com',
-    password: '123456'
+    email: 'spikeg12@gmail.com',
+    password: '1234567'
   });
 
   const { email, password  } = formValues;
@@ -18,8 +22,28 @@ export const LoginScreen = () => {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    dispatch(startLoginEmailPassword(email, password));
+    if(validatorLogin()){
 
+      dispatch(startLoginEmailPassword(email, password));
+    }
+
+  }
+
+  const handleGoogleLogin = () => {
+    dispatch(startGoogleLogin());
+  }
+
+  const validatorLogin = () => {
+    
+    if (!validator.isEmail(email)) {
+      dispatch(setError('Email is invalid'));
+      return false;
+    }
+    if (password.trim().length <6) {
+      dispatch(setError('Password is invalid'));
+      return false;
+    }
+    return true;
   }
 
   return (
@@ -27,6 +51,8 @@ export const LoginScreen = () => {
       <h3 className='auth__title'>Login</h3>
 
       <form onSubmit={handleLogin}>
+        { msgError && <div className='auth__alert-error'>{msgError}</div> }
+
         <input
           className='auth__input' 
           type="text"
@@ -49,6 +75,7 @@ export const LoginScreen = () => {
         <button 
           className='btn btn-primary btn-block'
           type='submit'
+          disabled={isLoading}
         >
           Login
         </button>
@@ -57,6 +84,7 @@ export const LoginScreen = () => {
           <p>Login Whit Social networks</p>
           <div 
             className="google-btn"
+            onClick={handleGoogleLogin}
           >
             <div className="google-icon-wrapper">
               <img className="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="google button" />
