@@ -10,28 +10,33 @@ import { JournalScreen } from '../components/journal/JournalScreen'
 import { AuthRouter } from './AuthRouter'
 import { PublicRoute } from './PublicRoute';
 import { PrivateRoute } from './PrivateRoute';
+import { startLoadingNotes } from '../actions/notes';
 
 export const AppRouter = () => {
 
 
   const dispatch = useDispatch();
 
-  const [checking, setChecking] = useState(true);
+  const [checking, setChecking] = useState(true); // si esta auntenticado o no
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   useEffect(() => {
     
     const auth = getAuth();
-    onAuthStateChanged(auth,(user) =>{
+    onAuthStateChanged(auth, async(user) =>{
       if(user?.uid){
         dispatch( login(user.uid,user.displayName) );
         setIsLoggedIn(true);
+        //ya autenticado
+        
+        dispatch(startLoadingNotes(user.uid));
       }else{
         setIsLoggedIn(false);
       }
       setChecking(false);
     }) 
   }, [  dispatch, setIsLoggedIn,setChecking ]);
+  
   
 
   if(checking){

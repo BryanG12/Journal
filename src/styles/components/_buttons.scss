@@ -32,6 +32,20 @@
   }
 }
 
+.btn-danger{
+  background-color: red;
+  border-radius: 2px ;
+  color: white;
+  font-size: 12px;
+  padding: 7px 10px 7px 10px;
+
+  transition: background-color 0.3s ease-in-out;
+
+
+  &:hover{
+    background-color: darken($color: red, $amount: 15);
+  }
+}
 .btn-block{
   width: 100%;
 }

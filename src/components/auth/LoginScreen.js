@@ -1,6 +1,9 @@
 import React from 'react'
+import Swal from 'sweetalert2'
+
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+
 import validator from 'validator'
 import { startGoogleLogin, startLoginEmailPassword } from '../../actions/auth'
 import { setError } from '../../actions/ui'
@@ -37,21 +40,25 @@ export const LoginScreen = () => {
     
     if (!validator.isEmail(email)) {
       dispatch(setError('Email is invalid'));
+      Swal.fire('Error', 'Email is invalid', 'error') 
       return false;
     }
     if (password.trim().length <6) {
       dispatch(setError('Password is invalid'));
+      Swal.fire('Error', 'Password is invalid', 'error') 
       return false;
     }
     return true;
   }
+  
+  // msgError && Swal.fire('Error', msgError, 'error') 
 
   return (
     <>
       <h3 className='auth__title'>Login</h3>
 
       <form onSubmit={handleLogin}>
-        { msgError && <div className='auth__alert-error'>{msgError}</div> }
+        {/* { msgError && <div className='auth__alert-error'>{msgError}</div> } */}
 
         <input
           className='auth__input' 

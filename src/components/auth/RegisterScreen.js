@@ -5,6 +5,7 @@ import { useForm } from '../../hooks/useForm'
 import validator from 'validator'
 import { removeError, setError } from '../../actions/ui'
 import { startRegisterEmailPassword } from '../../actions/auth'
+import Swal from 'sweetalert2'
 
 export const RegisterScreen = () => {
   
@@ -34,18 +35,23 @@ export const RegisterScreen = () => {
 
     if( name.trim().length === 0 ){
       dispatch(setError('Name is required'));
+      Swal.fire('Error', 'Name is required', 'error') 
       return  false; 
     }else if(!validator.isEmail(email)){
       dispatch(setError('Email is invalid'));
+      Swal.fire('Error', 'Email is invalid', 'error') 
       return false;
     }else if(password !== passwordConfirmation || password.length <6){
       dispatch(setError('Password is invalid'));
+      Swal.fire('Error', 'Password is invalid', 'error') 
       return false;
     }
     dispatch(removeError());
     return true;
     
-  }
+  };
+
+  // (msgError)&& Swal.fire('Error', msgError, 'error') 
 
   return (
     <>
@@ -54,8 +60,7 @@ export const RegisterScreen = () => {
       <form onSubmit={handleRegister} >
 
         
-        {msgError && (<div className='auth__alert-error'>{msgError}</div>)}
-      
+        {/* {msgError && (<div className='auth__alert-error'>{msgError}</div>)} */}
 
         <input
           className='auth__input' 

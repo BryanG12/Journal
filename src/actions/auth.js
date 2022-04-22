@@ -1,7 +1,17 @@
-import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { getAuth, 
+        signInWithPopup, 
+        GoogleAuthProvider, 
+        createUserWithEmailAndPassword, 
+        updateProfile, 
+        signInWithEmailAndPassword, 
+        signOut 
+      } from 'firebase/auth';
+
+import Swal from 'sweetalert2'
 
 import { provider,app, db } from '../firebase/firebase-config';
 import { types } from '../types/types';
+import { noteLogout } from './notes';
 import { finishLoading, startLoading } from './ui';
 
 
@@ -16,14 +26,19 @@ export const startLoginEmailPassword = (email,password) => {
     
     signInWithEmailAndPassword(auth,email,password)
     .then(({user}) => {
-      console.log(user);
+      // console.log(user);
       dispatch( login( user.uid, user.displayName))
       dispatch(finishLoading());
     })
-    .catch( error => {
+    .catch( e => {
       dispatch(finishLoading());
-      console.log(error.message);
-      // dispatch( loginError( error.message ))
+      let msg ='';
+      if (e.message==='Firebase: Error (auth/wrong-password).') {
+        msg = 'Contraseña incorrecta';
+      }else{
+        msg = 'El correo no existe';
+      }
+      Swal.fire('Error',msg,'error');
     })
   }
 
@@ -41,7 +56,7 @@ export const startRegisterEmailPassword = (email, password, name) => {
 
     })
     .catch(e => {
-      console.log({e});
+      Swal.fire('Error','El correo ya esta utilizado','error');
     })
   }
 }
@@ -84,6 +99,7 @@ export const startLogout = () => {
     const auth = getAuth();
     await signOut(auth)
     dispatch(logout());  
+    dispatch(noteLogout());
   }
 };
 
